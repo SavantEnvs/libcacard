@@ -191,6 +191,7 @@ EXTRA_DIST +=					\
 	tests/db/key4.db                        \
 	tests/db/pkcs11.txt                     \
 	tests/db.crypt                          \
+	tests/db2.crypt                         \
 	tests/cert.cfg				\
 	fuzz/corpora/fuzz_options/test		\
 	fuzz/corpora/fuzz_simpletlv/test	\
