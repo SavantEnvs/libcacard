@@ -145,8 +145,11 @@ int LLVMFuzzerInitialize(int *argc, char ***argv)
     return 0;
 }
 
-/* We require at least 2b for length and 4 bytes for simplest APDU (Case 1) */
-size_t kMinInputLength = 6;
+/* We require at least 1B for length and 4 bytes for simplest APDU (Case 1) */
+size_t kMinInputLength = 5;
+/* Max size to avoid timeouts is set to 32kB -- it should be enough to excercise
+ * all code paths */
+size_t kMaxInputLength = 32 * 1024;
 
 int LLVMFuzzerTestOneInput(const uint8_t *Data, size_t Size)
 {
@@ -158,6 +161,11 @@ int LLVMFuzzerTestOneInput(const uint8_t *Data, size_t Size)
 
     if (left < kMinInputLength) {
         g_debug("Too short input for APDU");
+        return 0;
+    }
+
+    if (left > kMaxInputLength) {
+        g_debug("Too long input for APDU");
         return 0;
     }
 
