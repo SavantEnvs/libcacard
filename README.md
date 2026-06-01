@@ -83,7 +83,7 @@ More information about libcacard, see the following links to the SPICE documenta
 There is also documentation in qemu repository, describing how CCID device emulation
 works inside of the QEMU:
 
-* https://git.qemu.org/?p=qemu.git;a=blob;f=docs/ccid.txt
+* https://gitlab.com/qemu-project/qemu/-/blob/master/docs/system/devices/ccid.rst
 
 # Contributing
 
