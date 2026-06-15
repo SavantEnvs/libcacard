@@ -7,6 +7,7 @@
  */
 
 #include <stdlib.h>
+#include <unistd.h>
 #include <libcacard.h>
 
 #include "fuzzer.h"
@@ -71,6 +72,15 @@ static void libcacard_init(void)
      * and dirname part of argv[0] when running from oss-fuzz */
     dbdir = g_test_build_filename(G_TEST_DIST, "db", NULL);
     args = g_strdup_printf(ARGS, dbdir);
+
+    /* The database's pkcs11.txt references the softoken config with a path
+     * relative to the current directory, so switch to the directory holding
+     * the database before initialising NSS. */
+    gchar *dbparent = g_path_get_dirname(dbdir);
+    if (chdir(dbparent) != 0) {
+        g_warning("could not chdir to %s", dbparent);
+    }
+    g_free(dbparent);
 
     thread = g_thread_new("fuzz/events", events_thread, NULL);
 
