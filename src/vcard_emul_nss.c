@@ -1341,14 +1341,14 @@ vcard_emul_options(const char *args)
                 opts->vreader = g_renew(VirtualReaderOptions, opts->vreader,
                                         reader_count);
             }
-            vreaderOpt = &opts->vreader[opts->vreader_count];
+            vreaderOpt = &opts->vreader[opts->vreader_count++];
             vreaderOpt->name = g_strndup(name, name_length);
             vreaderOpt->vname = g_strndup(vname, vname_length);
             vreaderOpt->card_type = type;
             vreaderOpt->type_params =
                 g_strndup(type_params, type_params_length);
             count = count_tokens(args, ',', ')') + 1;
-            vreaderOpt->cert_count = count;
+            vreaderOpt->cert_count = 0;
             vreaderOpt->cert_name = g_new(char *, count);
             for (i = 0; i < count; i++) {
                 const char *cert = args;
@@ -1358,12 +1358,12 @@ vcard_emul_options(const char *args)
                     goto fail;
                 }
                 vreaderOpt->cert_name[i] = g_strndup(cert, args - cert);
+                vreaderOpt->cert_count++;
                 args = strip(args+1);
             }
             if (*args == ')') {
                 args++;
             }
-            opts->vreader_count++;
         /* use_hw= */
         } else if (strncmp(args, "use_hw=", 7) == 0) {
             args = strip(args+7);
