@@ -1,0 +1,8 @@
+project: savantenvs/libcacard
+target: fuzz_apdu
+testsuite:
+  - https://$MAYHEM_DOMAIN/$MAYHEM_PROJECT/$MAYHEM_TARGET/testsuite.tar
+  - file://mayhem/fuzz_apdu/testsuite
+cmds:
+  - cmd: /mayhem/fuzz_apdu
+    libfuzzer: true
