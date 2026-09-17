@@ -1,0 +1,10 @@
+project: savantenvs/libcacard
+target: fuzz-options-buggy-mhh-run-16
+# origin: https://app.mayhem.security/mayhemheroes/libcacard/fuzz-options/16
+
+cmds:
+  - cmd: /mayhem/fuzz_options
+    libfuzzer: true
+
+testsuite:
+  - https://$MAYHEM_DOMAIN/$MAYHEM_PROJECT/$MAYHEM_TARGET/testsuite.tar
