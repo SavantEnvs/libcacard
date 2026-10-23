@@ -92,6 +92,7 @@ test_programs =					\
 	tests/simpletlv				\
 	tests/hwtests				\
 	tests/initialize			\
+	tests/direct				\
 	$(NULL)
 
 tests_unit_cac_LDADD =				\
@@ -148,6 +149,12 @@ tests_initialize_SOURCES =			\
 	tests/initialize.c			\
 	$(NULL)
 tests_initialize_LDADD =			\
+	$(GLIB2_LIBS)				\
+	$(CODE_COVERAGE_LIBS)			\
+	libcacard.la				\
+	$(NULL)
+
+tests_direct_LDADD =				\
 	$(GLIB2_LIBS)				\
 	$(CODE_COVERAGE_LIBS)			\
 	libcacard.la				\

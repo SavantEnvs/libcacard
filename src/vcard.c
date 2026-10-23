@@ -87,7 +87,7 @@ vcard_reset(VCard *card, VCardPower power)
         card->vcard_buffer_response = NULL;
     }
     vcard_emul_reset(card, power);
-    if (applet) {
+    if (applet && applet->reset_applet) {
         applet->reset_applet(card, 0);
     }
 }

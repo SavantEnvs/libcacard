@@ -76,6 +76,18 @@ test(
   env: env,
 )
 
+direct_test = executable(
+  'direct',
+  ['direct.c'],
+  dependencies: [libcacard_dep],
+)
+
+test(
+  'direct',
+  direct_test,
+  env: env,
+)
+
 hwtests_test = executable(
   'hwtests',
   ['hwtests.c', 'common.c'],
