@@ -119,7 +119,9 @@ simpletlv_encode_internal(struct simpletlv_member *tlv, size_t tlv_len,
         }
         if (buffer_type & SIMPLETLV_VALUE) {
             if (tlv[i].type == SIMPLETLV_TYPE_LEAF) {
-                memcpy(p, tlv[i].value.value, tlv[i].length);
+                if (tlv[i].length > 0) {
+                    memcpy(p, tlv[i].value.value, tlv[i].length);
+                }
                 p += tlv[i].length;
             } else {
                 /* recurse */
