@@ -147,6 +147,79 @@ static void test_encode_zero(void)
     g_free(result);
 }
 
+/* Test that we can encode zero-length values with NULL value pointer */
+static void test_encode_zero_null(void)
+{
+    unsigned char *result = NULL, *p = NULL;
+    int result_len = 0;
+    unsigned char empty_encoded[] = "\x25\x00";
+    unsigned char value[] = "\x10\x11";
+    unsigned char mixed_encoded[] = "\x25\x00\x26\x02\x10\x11";
+    static struct simpletlv_member simple[1] = {
+      {0x25, 0, {/*.value = NULL*/}, SIMPLETLV_TYPE_LEAF}
+    };
+    static struct simpletlv_member mixed[2] = {
+      {0x25, 0, {/*.value = NULL*/}, SIMPLETLV_TYPE_LEAF},
+      {0x26, 2, {/*.value = value*/}, SIMPLETLV_TYPE_LEAF}
+    };
+    simple[0].value.value = NULL;
+    mixed[0].value.value = NULL;
+    mixed[1].value.value = value;
+
+    /* Encode simple short TLV with automatic allocation */
+    result = NULL;
+    result_len = simpletlv_encode(simple, 1, &result, 0, NULL);
+    g_assert_cmpmem(result, result_len, empty_encoded, 2);
+    g_free(result);
+
+    /* Encode simple short TLV with pre-allocated buffer (long enough) */
+    result = g_malloc(10);
+    result_len = simpletlv_encode(simple, 1, &result, 10, NULL);
+    g_assert_cmpmem(result, result_len, empty_encoded, 2);
+    g_free(result);
+
+    /* Encode the empty leaf followed by a non-empty one */
+    result = NULL;
+    result_len = simpletlv_encode(mixed, 2, &result, 0, NULL);
+    g_assert_cmpmem(result, result_len, mixed_encoded, 6);
+    g_free(result);
+
+    /* Encode only VALUE part of the empty and non-empty leaves */
+    result = g_malloc(10);
+    result_len = simpletlv_encode_val(mixed, 2, &result, 10, &p);
+    g_assert_cmpmem(result, result_len, value, 2);
+    g_free(result);
+}
+
+/* Test that NULL value with non-zero length is rejected */
+static void test_encode_null_value(void)
+{
+    unsigned char *result = NULL;
+    int result_len = 0;
+    static struct simpletlv_member simple[1] = {
+      {0x25, 2, {/*.value = NULL*/}, SIMPLETLV_TYPE_LEAF}
+    };
+    simple[0].value.value = NULL;
+
+    /* Encode with automatic allocation */
+    result = NULL;
+    result_len = simpletlv_encode(simple, 1, &result, 0, NULL);
+    g_assert_cmpint(result_len, ==, -1);
+    g_assert_null(result);
+
+    /* Encode with pre-allocated buffer (long enough) */
+    result = g_malloc(10);
+    result_len = simpletlv_encode(simple, 1, &result, 10, NULL);
+    g_assert_cmpint(result_len, ==, -1);
+    g_free(result);
+
+    /* Encode only VALUE part */
+    result = NULL;
+    result_len = simpletlv_encode_val(simple, 1, &result, 0, NULL);
+    g_assert_cmpint(result_len, ==, -1);
+    g_assert_null(result);
+}
+
 /* Test that we can encode arbitrary data into Simple TLV */
 static void test_encode_simple(void)
 {
@@ -408,6 +481,8 @@ int main(int argc, char *argv[])
     g_test_add_func("/simpletlv/length/nested", test_length_nested);
     g_test_add_func("/simpletlv/length/skipped", test_length_skipped);
     g_test_add_func("/simpletlv/encode/zero", test_encode_zero);
+    g_test_add_func("/simpletlv/encode/zero_null", test_encode_zero_null);
+    g_test_add_func("/simpletlv/encode/null_value", test_encode_null_value);
     g_test_add_func("/simpletlv/encode/simple", test_encode_simple);
     g_test_add_func("/simpletlv/encode/nested", test_encode_nested);
     g_test_add_func("/simpletlv/encode/skipped", test_encode_skipped);
